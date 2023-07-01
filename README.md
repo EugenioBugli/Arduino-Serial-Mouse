@@ -21,10 +21,10 @@ A3. Arduino serial mouse
 
 
 
-UP:
-DOWN:
-LEFT:
-RIGHT:
+UP: pin a1 (bit 1 port f)
+DOWN: pin a9 (bit 1 port k)
+LEFT: pin 40 (bit 1 port g)
+RIGHT: pin 48 ( bit 1 port l)
 
 LEFT CLICK: pin 12 ( bit 6 port b )
 RIGHT CLICK: pin 9 ( bit 6 port h )
