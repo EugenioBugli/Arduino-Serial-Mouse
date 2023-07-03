@@ -47,43 +47,46 @@ int main(void){
   PORTL |= X_MOVE;
   PORTG |= X_MOVE;
 
-  printf("\n");
-  printf("Arduino Serial Mouse Pogram\n");
-  printf("Initial coordinates: (%d,%d) \n", X_counter, Y_counter);
+  //printf("\n");
+  //printf("Initial coordinates: (%d,%d) \n", X_counter, Y_counter);
+  //printf("\n");
   while(1){
 
-    if ( (PINB & CLICK) == 0) {
+    /*if ( (PINB & CLICK) == 0) {
       printf("Right click from pin: %02x \n", (int) PINB);
-      _delay_ms(10000);
+      _delay_ms(1000);
     }
 
     if ( (PINH & CLICK) == 0) {
-      printf("Left click from pin: %02x \n", (int) PINH);
-      _delay_ms(10000);
-    }
+      //printf("Left click from pin: %02x \n", (int) PINH);
+      //_delay_ms(1000);
+    }*/
 
     if ( (PINF & Y_MOVE) == 0) {
-      printf("Moving forward. Y position: %d\n", Y_counter);
+      //printf("Moving forward. Y position: %d\n", Y_counter);
       Y_counter++;
       _delay_ms(1000);
     }
 
     if ( (PINL & X_MOVE ) == 0) {
-      printf("Moving right. X position: %d\n", X_counter);
+      //printf("Moving right. X position: %d\n", X_counter);
       X_counter++;
       _delay_ms(1000);
     }
 
     if ( (PINK & Y_MOVE) == 0) {
-      printf("Moving backward. Y position: %d\n", Y_counter);
+      //printf("Moving backward. Y position: %d\n", Y_counter);
       Y_counter--;
       _delay_ms(1000);
     }
 
     if ( (PING & X_MOVE ) == 0) {
-      printf("Moving left. X position: %d\n", X_counter);
+      //printf("Moving left. X position: %d\n", X_counter);
       X_counter--;
       _delay_ms(1000);
     }
+
+    printf("Actual State : \nRight Click: %d\nLeft Click: %d\nX: %d\nY: %d\n\n",(PINB & CLICK) == 0, (PINH & CLICK) == 0, X_counter, Y_counter);
+    _delay_ms(8000);
   }
 }
