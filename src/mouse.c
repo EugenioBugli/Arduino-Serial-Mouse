@@ -8,7 +8,7 @@
 #define CLICK (1 << 6)
 #define MOVE (1 << 1)
 #define BAUD 1200
-#define MYUBRR ((F_CPU/ (16UL * BAUD)) -1)
+#define MYUBRR (F_CPU/16/BAUD-1)
 
 //using int8_t instead of uint8_t to store negative numbers ( range : -128 : 127 )
 
@@ -25,7 +25,7 @@ void UART_init(void) {
 void UART_transmit(uint8_t data) {
   while( !(UCSR0A & (1 << UDRE0)) ); //polling ---> wait for transmission completed
   UDR0 = data; //transmit
-  //printf("Send: %d\n", data);
+  printf("%u\n", data);
 }
 
 void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
@@ -34,10 +34,13 @@ void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
   uint8_t third_pack = 0x00;//dy & 0x7F;
   //printf("Send First\n");
   UART_transmit(first_pack);
+  //_delay_ms(2000);
   //printf("Send Second\n");
   UART_transmit(second_pack);
+  //_delay_ms(2000);
   //printf("Send Third\n");
   UART_transmit(third_pack);
+  //_delay_ms(2000);
   //printf("packets sent\n");
 }
 
@@ -121,7 +124,6 @@ int main(void){
     //printf("Actual State : \nRight Click: %d\nLeft Click: %d\nX: %d\nY: %d\n\n",(PINB & CLICK) == 0, (PINH & CLICK) == 0, X_counter, Y_counter);
     uint8_t lb = (PINH & CLICK) == 0;
     uint8_t rb = (PINB & CLICK) == 0;
-    _delay_ms(18000);
     Send_packets(lb, rb, Y_counter, X_counter);
   }
 }
