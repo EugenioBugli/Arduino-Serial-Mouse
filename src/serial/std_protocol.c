@@ -14,7 +14,8 @@ int main() {
         return 0;
     }
     printf("/dev/ttyACM0 opened \n");
-
+    usleep(100000);
+    printf("waited\n");
     tcflush(serial_fd, TCIFLUSH);
     struct termios tty;
     tcgetattr(serial_fd, &tty); // setting stored to tty
@@ -27,7 +28,7 @@ int main() {
     //tty.c_cflag |= CS7; // 7 data bits
     tcsetattr(serial_fd, TCSANOW, &tty); // apply tty to serial port
 
-    uint8_t buffer[4];
+    uint8_t buffer[3];
     ssize_t bytes_read;
     int idx = 0;
     while(1) {
@@ -36,12 +37,23 @@ int main() {
             printf("Error during Read\n");
             break;
         }
-        printf("You've read something: %u, where idx is %d\n", buffer[idx], idx);
         if(bytes_read > 0) {
-            if(idx <=2 ) idx++;
-            else {
+            // check data
+            if((buffer[0] & 0x80) && !(buffer[1] & 0x80) && !(buffer[2] & 0x80) ) {
                 uint8_t first = buffer[0];
+                printf("First packet: %u\n", first);
+                uint8_t second = buffer[1];
+                printf("Second packet: %u\n", second);
+                uint8_t third = buffer[2];
+                printf("Third packet: %u\n", third);
                 idx = 0;
+                uint8_t lb = first & 0x10;
+                uint8_t rb = first & 0x20;
+                uint8_t dx = second & 0x3F;
+                uint8_t dy = third & 0x3F;
+                if(lb) printf("Left click\n");
+                if(rb) printf("Right Click\n");
+                printf("current position: %u,%u\n ", dx, dy);
                 printf("\n------\n");
             }
         }

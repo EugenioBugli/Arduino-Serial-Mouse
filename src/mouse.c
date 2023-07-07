@@ -30,8 +30,8 @@ void UART_transmit(uint8_t data) {
 
 void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
   uint8_t first_pack = 0x80 | (lb << 5) | (rb << 4) ;//| ( (dy >> 6) & 0x03 ) | ( (dx >> 6) );
-  uint8_t second_pack = 0x00;//dx & 0x7F;
-  uint8_t third_pack = 0x00;//dy & 0x7F;
+  uint8_t second_pack = dx & 0x3F;
+  uint8_t third_pack = dy & 0x3F;
   //printf("Send First\n");
   UART_transmit(first_pack);
   //_delay_ms(2000);
@@ -83,8 +83,8 @@ int main(void){
   //printf("\n");
 
   
-  int8_t X_counter = 0;
-  int8_t Y_counter = 0;
+  uint8_t X_counter = 0;
+  uint8_t Y_counter = 0;
 
   while(1){
 
@@ -101,25 +101,25 @@ int main(void){
     if ( (PINF & MOVE) == 0) {
       //printf("Moving forward. Y position: %d\n", Y_counter);
       Y_counter++;
-      _delay_ms(1000);
+      //_delay_ms(1000);
     }
 
     if ( (PINL & MOVE ) == 0) {
       //printf("Moving right. X position: %d\n", X_counter);
       X_counter++;
-      _delay_ms(1000);
+      //_delay_ms(1000);
     }
 
     if ( (PINK & MOVE) == 0) {
       //printf("Moving backward. Y position: %d\n", Y_counter);
       Y_counter--;
-      _delay_ms(1000);
+      //_delay_ms(1000);
     }
 
     if ( (PING & MOVE ) == 0) {
       //printf("Moving left. X position: %d\n", X_counter);
       X_counter--;
-      _delay_ms(1000);
+      //_delay_ms(1000);
     }
     //printf("Actual State : \nRight Click: %d\nLeft Click: %d\nX: %d\nY: %d\n\n",(PINB & CLICK) == 0, (PINH & CLICK) == 0, X_counter, Y_counter);
     uint8_t lb = (PINH & CLICK) == 0;
