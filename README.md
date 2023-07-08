@@ -4,12 +4,9 @@ Sistemi Operativi
 
 Prof: Giorgio Grisetti
 
-
-Based on : https://roborooter.com/post/serial-mice/
+Based on : https://roborooter.com/post/serial-mice/ and https://linux.die.net/man/4/mouse
 
 avr_common folder author : Giorgio Grisetti
-
-
 
 A3. Arduino serial mouse
    Implement a fake mouse, simulated with 6 keys: up, down , left, right and left/right button.
@@ -18,13 +15,18 @@ A3. Arduino serial mouse
    Once this is done and the protocol verified, you can connect it to the X server following these guide:
    https://help.ubuntu.com/community/SerialMouseHowto
 
+ATMEGA2560
 
+UP: pin A1 (bit 1 port F) 
 
+DOWN: pin A9 (bit 1 port K)
 
-UP: pin a1 (bit 1 port f)
-DOWN: pin a9 (bit 1 port k)
-LEFT: pin 40 (bit 1 port g)
-RIGHT: pin 48 ( bit 1 port l)
+LEFT: pin 40 (bit 1 port G)
 
-LEFT CLICK: pin 12 ( bit 6 port b )
-RIGHT CLICK: pin 9 ( bit 6 port h )
+RIGHT: pin 48 (bit 1 port L)
+
+LEFT CLICK: pin 12 (bit 6 port B)
+
+RIGHT CLICK: pin 9 (bit 6 port H)
+
+Serial Mouse Protocol Used : Microsoft Protocol
