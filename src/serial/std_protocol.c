@@ -8,7 +8,7 @@
 #define BAUD_RATE B1200
 
 int main() {
-    int serial_fd = open("/dev/ttyACM0", O_RDONLY | O_NOCTTY);
+    int serial_fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
     if(serial_fd  <= 0) {
         printf("Error (Open)\n");
         return 0;
@@ -21,14 +21,14 @@ int main() {
     tcgetattr(serial_fd, &tty); // setting stored to tty
     cfsetispeed(&tty, BAUD_RATE); // set baudrate input
     cfsetospeed(&tty, BAUD_RATE);
-    tty.c_cflag |= (CLOCAL | CREAD); //terminal operated in local mode and enable char receiving
-    //tty.c_cflag &= ~PARENB; // no parity
-    //tty.c_cflag &= ~CSTOPB; //one stop bit
-    //tty.c_cflag &= ~CSIZE; //clear data size bits
-    //tty.c_cflag |= CS7; // 7 data bits
+    tty.c_cflag |= CLOCAL | CREAD; // 7 data bits, terminal operated in local mode and enable char receiving
+    tty.c_iflag = 0;
+    tty.c_oflag = 0;
+    tty.c_lflag = 0;
     tcsetattr(serial_fd, TCSANOW, &tty); // apply tty to serial port
 
-    uint8_t buffer[14];
+    uint8_t buffer[3];
+    uint8_t value;
     ssize_t bytes_read;
     ssize_t total;
     uint8_t first, second, third;
@@ -39,21 +39,28 @@ int main() {
             printf("Error during Read\n");
             break;
         }
-        if(total == sizeof(buffer[idx])*14) {
-            //check pack.txt
+        //printf("idx %d : %u\n",idx, buffer[idx]);
+        if(idx == (sizeof(buffer)-1) && bytes_read == sizeof(buffer[idx]) ) {
+            /*
+            for(int i = 0; i < 3; i++) {
+                printf("I've read: %u\n", buffer[i]);
+            }
+            printf("-----------\n");
+            */
             first = buffer[0];
-            second = buffer[6];
-            third = buffer[10];
+            second = buffer[1];
+            third = buffer[2];
             //check bit 6 of data packs
+            printf("First packet: %u\n", first);
+            printf("Second packet: %u\n", second);
+            printf("Third packet: %u\n", third);
+            //check data format
             if ((first & 0x80) && !(second & 0x80) && !(third & 0x80)) {
-                printf("First packet: %u\n", first);
-                printf("Second packet: %u\n", second);
-                printf("Third packet: %u\n", third);
 
                 uint8_t lb = first & 0x20;
                 uint8_t rb = first & 0x10;
                 int8_t dx = (second & 0x3F) | (first & 0x03);
-                int8_t dy = (third & 0x3F) | (first & 0xC0);
+                int8_t dy = (third & 0x3F) | (first & 0x0C);
 
                 if (lb) printf("Left Click \n");
                 if (rb) printf("Right Click \n");
@@ -62,11 +69,9 @@ int main() {
                 printf("-----------\n");
             }
             idx = 0;
-            total = 0;
         }
         else {
             idx++;
-            total += bytes_read;
         }
     }
     

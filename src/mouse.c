@@ -17,7 +17,7 @@ void UART_init(void) {
   UBRR0H = (uint8_t) ( MYUBRR >> 8 );
   UBRR0L = (uint8_t) MYUBRR;
   //enable transmission
-  UCSR0B = (1 << TXEN0);
+  UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
   //set frame format (7 data bits + 1 stop bit)
   UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
 }
@@ -25,7 +25,7 @@ void UART_init(void) {
 void UART_transmit(uint8_t data) {
   while( !(UCSR0A & (1 << UDRE0)) ); //polling ---> wait for transmission completed
   UDR0 = data; //transmit
-  printf("%u\n", data);
+  //printf("%u\n", data);
 }
 
 void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
@@ -34,13 +34,13 @@ void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
   uint8_t third_pack = dy & 0x3F;
   //printf("Send First\n");
   UART_transmit(first_pack);
-  //_delay_ms(2000);
+  //_delay_ms(4000);
   //printf("Send Second\n");
   UART_transmit(second_pack);
-  //_delay_ms(2000);
+  //_delay_ms(4000);
   //printf("Send Third\n");
   UART_transmit(third_pack);
-  //_delay_ms(2000);
+  //_delay_ms(4000);
   //printf("packets sent\n");
 }
 
