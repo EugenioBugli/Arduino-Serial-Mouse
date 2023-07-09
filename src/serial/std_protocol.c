@@ -22,15 +22,13 @@ int main() {
     cfsetispeed(&tty, BAUD_RATE); // set baudrate input
     cfsetospeed(&tty, BAUD_RATE);
     tty.c_cflag |= CLOCAL | CREAD; // 7 data bits, terminal operated in local mode and enable char receiving
-    tty.c_iflag = 0;
-    tty.c_oflag = 0;
-    tty.c_lflag = 0;
+    tty.c_iflag = 0; // disable input processing
+    tty.c_oflag = 0; // disable output processing
+    tty.c_lflag = 0; // disable line processing
     tcsetattr(serial_fd, TCSANOW, &tty); // apply tty to serial port
 
     uint8_t buffer[3];
-    uint8_t value;
     ssize_t bytes_read;
-    ssize_t total;
     uint8_t first, second, third;
     int idx = 0;
     while(1) {
@@ -50,7 +48,6 @@ int main() {
             first = buffer[0];
             second = buffer[1];
             third = buffer[2];
-            //check bit 6 of data packs
             printf("First packet: %u\n", first);
             printf("Second packet: %u\n", second);
             printf("Third packet: %u\n", third);

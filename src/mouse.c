@@ -16,7 +16,7 @@ void UART_init(void) {
   //set baud rate
   UBRR0H = (uint8_t) ( MYUBRR >> 8 );
   UBRR0L = (uint8_t) MYUBRR;
-  //enable transmission
+  //enable transmission in & out
   UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
   //set frame format (7 data bits + 1 stop bit)
   UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
@@ -32,16 +32,12 @@ void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
   uint8_t first_pack = 0x80 | (lb << 5) | (rb << 4) | ((dy & 0xC0) << 3) | ((dx & 0xC0) << 1);
   uint8_t second_pack = dx & 0x3F;
   uint8_t third_pack = dy & 0x3F;
-  //printf("Send First\n");
   UART_transmit(first_pack);
   //_delay_ms(4000);
-  //printf("Send Second\n");
   UART_transmit(second_pack);
   //_delay_ms(4000);
-  //printf("Send Third\n");
   UART_transmit(third_pack);
   //_delay_ms(4000);
-  //printf("packets sent\n");
 }
 
 int main(void){
