@@ -28,33 +28,45 @@ int main() {
     //tty.c_cflag |= CS7; // 7 data bits
     tcsetattr(serial_fd, TCSANOW, &tty); // apply tty to serial port
 
-    uint8_t buffer[3];
+    uint8_t buffer[14];
     ssize_t bytes_read;
+    ssize_t total;
+    uint8_t first, second, third;
     int idx = 0;
     while(1) {
-        bytes_read = read(serial_fd, buffer, sizeof(buffer));
+        bytes_read = read(serial_fd, &buffer[idx], sizeof(buffer[idx]));
         if(bytes_read == -1) {
             printf("Error during Read\n");
             break;
         }
-        if(bytes_read == sizeof(buffer)) {
-            if((buffer[0] & 0x80) && !(buffer[1] & 0x80) && !(buffer[2] & 0x80) ) {
-                uint8_t first = buffer[0];
+        if(total == sizeof(buffer[idx])*14) {
+            //check pack.txt
+            first = buffer[0];
+            second = buffer[6];
+            third = buffer[10];
+            //check bit 6 of data packs
+            if ((first & 0x80) && !(second & 0x80) && !(third & 0x80)) {
                 printf("First packet: %u\n", first);
-                uint8_t second = buffer[1];
                 printf("Second packet: %u\n", second);
-                uint8_t third = buffer[2];
                 printf("Third packet: %u\n", third);
-                idx = 0;
-                uint8_t lb = first & 0x10;
-                uint8_t rb = first & 0x20;
-                int8_t dx = (second & 0x3F);
-                int8_t dy = (third & 0x3F);
-                if(lb) printf("Left click\n");
-                if(rb) printf("Right Click\n");
-                printf("current position: %d,%d\n ", dx, dy);
-                printf("\n------\n");
+
+                uint8_t lb = first & 0x20;
+                uint8_t rb = first & 0x10;
+                int8_t dx = (second & 0x3F) | (first & 0x03);
+                int8_t dy = (third & 0x3F) | (first & 0xC0);
+
+                if (lb) printf("Left Click \n");
+                if (rb) printf("Right Click \n");
+
+                printf("Actual Coordinates: %d,%d \n", dx, dy);
+                printf("-----------\n");
             }
+            idx = 0;
+            total = 0;
+        }
+        else {
+            idx++;
+            total += bytes_read;
         }
     }
     
