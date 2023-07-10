@@ -29,7 +29,7 @@ void UART_transmit(uint8_t data) {
 }
 
 void Send_packets(uint8_t lb, uint8_t rb, int8_t dy, int8_t dx) {
-  uint8_t first_pack = 0x80 | (lb << 5) | (rb << 4) | ((dy & 0xC0) << 3) | ((dx & 0xC0) << 1);
+  uint8_t first_pack = 0x80 | (lb << 5) | (rb << 4) | ((dy & 0xC0) >> 4 ) | ((dx & 0xC0) >> 6);
   uint8_t second_pack = dx & 0x3F;
   uint8_t third_pack = dy & 0x3F;
   UART_transmit(first_pack);

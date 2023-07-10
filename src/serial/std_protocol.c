@@ -56,8 +56,8 @@ int main() {
 
                 uint8_t lb = first & 0x20;
                 uint8_t rb = first & 0x10;
-                int8_t dx = (second & 0x3F) | (first & 0x03);
-                int8_t dy = (third & 0x3F) | (first & 0x0C);
+                int8_t dx = (second & 0x3F) | ((first & 0x03) << 6);
+                int8_t dy = (third & 0x3F) | ((first & 0x0C) << 4);
 
                 if (lb) printf("Left Click \n");
                 if (rb) printf("Right Click \n");
